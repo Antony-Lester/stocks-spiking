@@ -1,5 +1,25 @@
 {
+  "type": "module",
   "dependencies": {
-    "@alpacahq/alpaca-trade-api": "^3.0.0"
-  }
+    "@alpacahq/alpaca-trade-api": "^3.0.0",
+    "dotenv": "^16.0.3"
+  },
+  "name": "stocks",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Antony-Lester/stocks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Antony-Lester/stocks/issues"
+  },
+  "homepage": "https://github.com/Antony-Lester/stocks#readme"
 }
