@@ -1,3 +1,3 @@
-import getAllBars from "./getAllBars.js";
+import getAllBars from "..DATA/getAllBars.js";
 
 await getAllBars()

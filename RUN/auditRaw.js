@@ -4,9 +4,8 @@ import { RAW_DATA } from '../DATA/_locations.js'
 import getFiles from '../DATA/getFiles.js'
 import readJSON from '../DATA/readJSON.js'
 import { count1Day, count2Hour, count30Min, count5Min, count1Min } from '../DATA/_auditRaw.js'
-
+import makeJSON from '../DATA/makeJSON.js'
 const report = await readJSON(RAW_DATA, 'structure')
-
 for (const exchange of Object.keys(report)) { 
     const holder = report[exchange]
     for (const [ticker, obj] of Object.entries(holder)) { 
@@ -23,7 +22,11 @@ for (const exchange of Object.keys(report)) {
                 .then((data) => data.length)
             const audit1Min = await getFiles(path.join(RAW_DATA, exchange, ticker, 'timeframe', '1Min'))
                 .then((data) => data.length)
-            if (audit1Day > count1Day && audit2Hour > count2Hour && audit30Min > count30Min && audit5Min > count5Min && audit1Min > count1Min) { report[exchange][ticker].completed = true }
+            if (audit1Day > count1Day && audit2Hour > count2Hour && audit30Min > count30Min && audit5Min > count5Min && audit1Min > count1Min)
+            {
+                report[exchange][ticker].completed = true
+                report[exchange][ticker].dataPoints = {'1Min': audit1Day, '5Min': audit5Min, '30Min': audit30Min, '2Hour': audit2Hour, '1Day': audit1Day}
+            }
             else {
                 const result = []
                 if (audit1Day > count1Day) {result.push('1Day')}
@@ -35,7 +38,7 @@ for (const exchange of Object.keys(report)) {
         }
     }
 }
-            
+console.log(report.AMEX)           
 await makeJSON(RAW_DATA, 'structure', report)
 
 console.log('Inital Data Check Completed')

@@ -1,5 +1,5 @@
-import getBars from "../API/getBars.js"
-import baseDataAPIcalls from "../API/baseDataAPIcalls.js"
+import getBars from "./getBars.js"
+import baseDataAPIcalls from "./baseDataAPIcalls.js"
 import HDDcheck from "../DATA/checkHardDrive.js"
 import checkInitalData from "../DATA/checkInitalData.js"
 export default async function () {

@@ -2,7 +2,8 @@
   "type": "module",
   "dependencies": {
     "@alpacahq/alpaca-trade-api": "^3.0.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "moment": "^2.29.4"
   },
   "name": "stocks",
   "description": "",
@@ -10,7 +11,8 @@
   "main": "index.js",
   "scripts": {
     "init": "node --no-warnings RUN/init.js",
-    "download": "node --no-warnings RUN/download.js"
+    "download": "node --no-warnings RUN/download.js",
+    "audit-raw": "node --no-warnings RUN/auditRaw.js"
   },
   "repository": {
     "type": "git",

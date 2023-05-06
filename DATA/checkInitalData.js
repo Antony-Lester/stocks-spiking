@@ -1,7 +1,9 @@
-import getFiles from 'getFiles.js'
-import readJSON from 'readJSON.js'
-import { count1Day, count2Hour, count30Min, count5Min, count1Min } from '_auditRaw.js'
-
+import getFiles from './getFiles.js'
+import readJSON from './readJSON.js'
+import makeJSON from './makeJSON.js'
+import { count1Day, count2Hour, count30Min, count5Min, count1Min } from './_auditRaw.js'
+import { RAW_DATA } from './_locations.js'
+import path from 'path'
 export default async function () { 
     
 const report = await readJSON(RAW_DATA, 'structure')
