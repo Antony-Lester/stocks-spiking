@@ -8,6 +8,7 @@ import makeJSON from "../DATA/makeJSON.js";
 export default async function () { 
     checkHardDrive()
     await makeFolder(RAW_DATA)
+    await makeJSON(RAW_DATA, 'APIcallFails', [])
     const tickers = await getAllTickers()
     const stats = {exchanges: {}, class: {}, maintenance_margin_requirement: {}}
     for (const [exchange, exchangeData] of Object.entries(tickers)) {

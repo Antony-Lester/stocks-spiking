@@ -4,6 +4,7 @@ import { RAW_DATA } from "../DATA/_locations.js";
 import { USER_SUBSCRIBED } from "../secrets.js";
 import { RAW } from "../DATA/checkHardDrive.js";
 import moment from "moment";
+import makeJSONarray from "../DATA/makeJSONarray.js";
 
 const getStartDateByWeekAndYear = function(week, year, month) {
   return moment({y: year, M: month, d: 1}).add(week-1, 'w').day("Sunday").toDate()}
@@ -91,7 +92,10 @@ export default function (toDownload) {
               }
             }
           })
-        } catch { console.log('getBars CATCH TRIGGERED', symbol, timeframe, start, end, resp); return [] }
+        } catch {
+            await makeJSONarray(RAW_DATA, 'APIcallFails', [symbol, timeframe, start, end])
+            console.log('getBars CATCH TRIGGERED', symbol, timeframe, start, end); return []
+        }
       }
     }
 }
