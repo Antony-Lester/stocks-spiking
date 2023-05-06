@@ -1,6 +1,6 @@
 import getAllTickers from "../API/getAllTickers.js";
 import { RAW_DATA, TIMEFRAMES } from "../DATA/_locations.js";
-
+import getDirectories from "../DATA/getDirectories.js";
 import checkHardDrive from "../DATA/checkHardDrive.js";
 import makeFolder from "../DATA/makeFolder.js";
 import makeJSON from "../DATA/makeJSON.js";
@@ -41,6 +41,6 @@ export default async function () {
     const structure = await getDirectories(RAW_DATA).then(exchanges => exchanges.reduce((acc, curr) => (acc[curr] = {}, acc), {}))
     for (const exchange of Object.keys(structure)) {
         structure[exchange] = await getDirectories(RAW_DATA + '/' + exchange)
-        .then(tickers => tickers.reduce((acc, curr) => (acc[curr] = {}, acc), {}))  }
+            .then(tickers => tickers.reduce((acc, curr) => (acc[curr] = { completed: false }, acc), {}))  }
     await makeJSON(RAW_DATA, 'structure', structure) 
 }

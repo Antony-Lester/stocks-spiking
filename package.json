@@ -9,7 +9,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "init": "node --no-warnings RUN/makeRawDataStructure.js"
+    "init": "node --no-warnings RUN/init.js",
+    "download": "node --no-warnings RUN/download.js"
   },
   "repository": {
     "type": "git",

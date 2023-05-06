@@ -9,3 +9,4 @@ secrets.js
 RUN/processData.js
 RUN/processMetrics.js
 RUN/getAllBars.js
+RUN/TEST.js

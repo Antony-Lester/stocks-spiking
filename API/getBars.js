@@ -2,6 +2,7 @@ import connection from "./connection.js";
 import makeJSON from "../DATA/makeJSON.js";
 import { RAW_DATA } from "../DATA/_locations.js";
 import { USER_SUBSCRIBED } from "../secrets.js";
+import { RAW } from "../DATA/checkHardDrive.js";
 import moment from "moment";
 
 const getStartDateByWeekAndYear = function(week, year, month) {
@@ -11,20 +12,22 @@ const getEndDateByWeekAndYear = function(week, year, month) {
 function getFirstDayOfMonth(year, month) {return new Date(year, month, 0)}
 function getLastDayOfMonth(year, month) {return new Date(year, month, 0)}
 
-export default function (exchange, tickers) {
-  let exchangeFormatted = RAW_DATA + '/' + exchange + '/' 
-  const APIcalls = [] 
-  const years = [2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]
-  for (const ticker of tickers) {
+export default function (toDownload) {
+  const APIcalls = []
+  for (const [exchange, ticker] of toDownload) {
+    let exchangeFormatted = RAW_DATA + '/' + exchange + '/'
+    const years = [2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]
     for (const year of years) {
       for (let i = 1; i < 53; i++) {
         const start = getStartDateByWeekAndYear(i, year, 0)
         const end = getEndDateByWeekAndYear(i, year, 0)
-        APIcalls.push([exchangeFormatted, ticker, '1Min', start, end])}
+        APIcalls.push([exchangeFormatted, ticker, '1Min', start, end])
+      }
       for (let i = 1; i < 53; i += 2) {
         const start = getStartDateByWeekAndYear(i, year, 0)
         const end = getEndDateByWeekAndYear(i + 1, year, 0)
-        APIcalls.push([exchangeFormatted, ticker, '5Min', start, end])}
+        APIcalls.push([exchangeFormatted, ticker, '5Min', start, end])
+      }
       const m1start = getFirstDayOfMonth(year, 0);
       const m1end = getLastDayOfMonth(year, 6);
       APIcalls.push([exchangeFormatted, ticker, '30Min', m1start, m1end])
@@ -38,47 +41,57 @@ export default function (exchange, tickers) {
       APIcalls.push([exchangeFormatted, ticker, '1Day', start, end])
     }
   }
-  
-
+  APIcalls.sort() 
   let rateLimit = setInterval(async function () {
-    const [exchangePath, ticker, timeframe, start, end] = APIcalls.shift()
-    if (APIcalls.length === 0) { clearInterval(rateLimit);  console.log(exchange, ticker, 'Raw Data Download Completed')} 
-    const results = await requestBars(ticker, timeframe, start, end)
-    for (let result of results) {
-      const path = exchangePath + ticker + '/timeframe/' + timeframe
-      await makeJSON(path, Object.keys(result)[0], result[Object.keys(result)[0]])} 
-  }, 7500)
+    if (RAW()) {
+      const [exchangePath, ticker, timeframe, start, end] = APIcalls.shift()
+      if (APIcalls.length === 0) { clearInterval(rateLimit); console.log(exchange, ticker, 'Raw Data Download Completed') }
+      const results = await requestBars(ticker, timeframe, start, end)
+      for (let result of results) {
+        const path = exchangePath + ticker + '/timeframe/' + timeframe
+        makeJSON(path, Object.keys(result)[0], result[Object.keys(result)[0]])
+      }
+    }
+    }, 7500)
 
-  async function requestBars(symbol, timeframe, start, end) { 
-    //console.log('requestBars', symbol, timeframe, start, end)
-    const options = { start, end, timeframe, limit: 10000 }
-    let bars = [];
-    try {
-      let resp = connection.getBarsV2(symbol, options)
-      for await (let bar of resp) { bars.push(bar) };
-      return bars.map((bar) => {
-        return {
-          [bar.Timestamp]: {
-            open: bar.OpenPrice,
-            close: bar.ClosePrice,
-            high: bar.HighPrice,
-            low: bar.LowPrice,
-            vol: bar.Volume,
-            vwap: bar.VWAP,
-            tradeCount: bar.TradeCount}}})
-    } catch { try {
-      let resp = connection.getBarsV2(symbol, options)
-      for await (let bar of resp) { bars.push(bar) };
-      return bars.map((bar) => {
-        return {
-          [bar.Timestamp]: {
-            open: bar.OpenPrice,
-            close: bar.ClosePrice,
-            high: bar.HighPrice,
-            low: bar.LowPrice,
-            vol: bar.Volume,
-            vwap: bar.VWAP,
-            tradeCount: bar.TradeCount}}})
-    } catch { console.log('getBars CATCH TRIGGERED', ticker, timeframe, start, end); return []}}
-  }
+    async function requestBars(symbol, timeframe, start, end) {
+      console.log(symbol, timeframe, start, end)
+      const options = { start, end, timeframe, limit: 10000 }
+      let bars = [];
+      try {
+        let resp = connection.getBarsV2(symbol, options)
+        for await (let bar of resp) { bars.push(bar) };
+        return bars.map((bar) => {
+          return {
+            [bar.Timestamp]: {
+              open: bar.OpenPrice,
+              close: bar.ClosePrice,
+              high: bar.HighPrice,
+              low: bar.LowPrice,
+              vol: bar.Volume,
+              vwap: bar.VWAP,
+              tradeCount: bar.TradeCount
+            }
+          }
+        })
+      } catch {
+        try {
+          let resp = connection.getBarsV2(symbol, options)
+          for await (let bar of resp) { bars.push(bar) };
+          return bars.map((bar) => {
+            return {
+              [bar.Timestamp]: {
+                open: bar.OpenPrice,
+                close: bar.ClosePrice,
+                high: bar.HighPrice,
+                low: bar.LowPrice,
+                vol: bar.Volume,
+                vwap: bar.VWAP,
+                tradeCount: bar.TradeCount
+              }
+            }
+          })
+        } catch { console.log('getBars CATCH TRIGGERED', symbol, timeframe, start, end, resp); return [] }
+      }
+    }
 }

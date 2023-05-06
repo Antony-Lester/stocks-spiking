@@ -18,12 +18,12 @@ export function RAW() {
     try {
         const dir = opendir(HDD1)
         const space = statfs(HDD1, (e, stats) => {
-            if (Math.floor(stats.bsize * stats.bavail / 1024 / 1024 / 1024) < 450) {
+            if (Math.floor(stats.bsize * stats.bavail / 1024 / 1024 / 1024) < 50) {
                 console.error(HDD1.slice(5), '*** Free Space LOW ***',
                     Math.floor(stats.bsize * stats.bavail / 1024 / 1024 / 1024), ' GB')
                 return false
             } else {
-                console.log(HDD1.slice(5), 'Free Space', Math.floor(stats.bsize * stats.bavail / 1024 / 1024 / 1024), ' GB')
+                //console.log(HDD1.slice(5), 'Free Space', Math.floor(stats.bsize * stats.bavail / 1024 / 1024 / 1024), ' GB')
                 return true
             }
         })
