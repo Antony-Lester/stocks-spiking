@@ -75,7 +75,14 @@ export default async function processData() {
                 const data4Bar = await readJSON(path.join(RAW_DATA, exchange, ticker, 'timeframe', TIMEFRAMES[4]), files[3])
                 const data5Bar = await readJSON(path.join(RAW_DATA, exchange, ticker, 'timeframe', TIMEFRAMES[4]), files[4])
                 makeJSON(path.join(PROCESSED_DATA, exchange, ticker, 'timeline', '1Day'), file, assignData(data, data1Bar, data2Bar, data3Bar, data4Bar, data5Bar, result))})
-}})}
+        }
+        const report = readJSON(RAW_DATA, 'structure')
+        report[exchange][ticker].processed = true
+        makeJSON(RAW_DATA, 'structure', report)
+        console.log('Processed Completed For', exchange, ticker)
+    }
+    )
+}
 
 function assignData(data, data1Bar, data2Bar, data3Bar, data4Bar, data5Bar) {
     const result = { long: {}, short: {}, real: {} }
