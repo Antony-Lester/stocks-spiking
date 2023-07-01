@@ -1,5 +1,7 @@
 # stocks
 
+--Spiking idea-- no further updates will be made
+
 ##currently:
 
 get all US stocks, market data from <https://alpaca.markets/>
@@ -12,4 +14,4 @@ set API keys and data save locations in secrets(TEMPLATE).js & rename to secrets
 
 set local data location in DATA/_locations.js for where you want it stored (root path),
 
-run: npm run init to create raw data structure
+run: npm run init to create raw data structure ect
